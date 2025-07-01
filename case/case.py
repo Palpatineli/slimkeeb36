@@ -10,6 +10,7 @@ h = {
     'top': 0.8, 'switch_edge': 0.9, 'plate': 2.2, 'pcb': 1.6, 
     'bottom': 2.4 + tol['s'], 'key': 10.7, 'sticker': 0,  # 3.85
 }
+# change h['key'] to 7.6 if you only need flat keycaps
 
 keymap = ((50, 50), (50, 69.05), (50, 88.1), (69.05, 47), (69.05, 66.05), (69.05, 85.1), (88.1, 41), (88.1, 60.05), (88.1, 79.1), (107.15, 47), (107.15, 66.05), (107.15, 85.1), (126.2, 59), (126.2, 78.05), (126.2, 97.1), (30, 126.7), (46.5, 110.2), (69.05, 104.15))
 keymap_dir = (180, 180, 180, 0, 0, 0, 0, 0, 180, 0, 0, 180, 90, 90, 90, 300, 150, 180)
@@ -139,43 +140,11 @@ bd.export_stl(bd.mirror(bd.mirror(top_left_ass, bd.Plane.XZ), bd.Plane.YZ), 'out
 bd.export_stl(bd.mirror(keys, bd.Plane.XZ), 'output/keys.stl')
 bd.export_stl(bd.mirror(keys_l, bd.Plane.YZ), 'output/left-keys.stl')
 bd.export_stl(bd.mirror(bottom_ass - hotswaps - bd.Pos(Z=h['pcb'] - 0.2) * (bd.Part() + hotswaps), bd.Plane.XZ), 'output/bottom.stl')
-# bd.export_brep(bd.mirror(bottom_ass - hotswaps, bd.Plane.XZ), 'output/bottom.brep')
 bd.export_stl(bd.mirror(bd.mirror(bottom_ass - hotswaps_left - bd.Pos(Z=h['pcb'] - 0.2) * (bd.Part() + hotswaps_left), bd.Plane.XZ), bd.Plane.YZ), 'output/left-bottom.stl')
-# %%
-r0, r1, r2 = 3.5, 3.1, 2.6
-support = bd.extrude(outerline, r0) - bd.Pos(35, 60) * bd.Box(85, 47, r0, align=MIN) + bd.Pos(35.3, 60.3) * bd.Box(84.4, 46.4, r0, align=MIN)
-support -= bd.Pos(38.8, 65) * bd.Box(77.4, 37, r0, align=MIN)
-support += bd.Pos(39.1, 65.3) * bd.Box(76.8, 36.4, r0, align=MIN)
-support -= bd.Pos(124.7, 65) * bd.Box(10.8, 37, r0, align=MIN)
-support += bd.Pos(125, 65.3) * bd.Box(10.5 - r0 / 2, 36.4, r0, align=MIN)
-support += bd.Pos(135.5 - r0 / 2, 83.5, r0 / 2) * bd.Rot(X=90) * bd.Cylinder(r0 / 2, 36.4)
-support -= bd.Pos(35.3, 60) * bd.Box(3.5, 47, r0, align=MIN)
-support += bd.Pos(37.05, 60.3) * bd.Box(r0 / 2, 46.4, r0, align=MIN) + bd.Pos(37.05, 83.5, r0 / 2) * bd.Rot(X=90) * bd.Cylinder(r0 / 2, 46.4)
-support -= bd.Pos(116.2 + r0 / 2, 60.3) * bd.Box(r0 / 2, 46.4, r0, align=MIN)
-support += bd.Pos(117.95, 83.5, r0 / 2) * bd.Rot(X=90) * bd.Cylinder(r0 / 2, 46.4)
-support -= bd.Pos(116.2, 65) * bd.Box(3.8, 37, r0, align=MIN)
-support += bd.Pos(117.95, 83.5, r0 / 2) * bd.Rot(X=90) * bd.Cylinder(r2 / 2, 37)
-for center in (42.5 + 3.5 * x for x in range(21)): 
-    support -= bd.Pos(center, 83.5, r0 / 2) * bd.Rot(X=90) * bd.Cylinder(r1 / 2, 36.4) + bd.Pos(center, 83.5, r0 / 4) * bd.Box(r1, 36.4, r0 / 2)
-support -= bd.Pos(133.75, 107, r0 / 2) * bd.Rot(X=90) * bd.Cylinder(r1 / 2, 10) + bd.Pos(133.75, 60, r0 / 2) * bd.Rot(X=90) * bd.Cylinder(r1 / 2, 10)
-support += bd.Pos(133.75, 106.7, r0 / 2) * bd.Rot(X=90) * bd.Cylinder(r2 / 2, 10) + bd.Pos(133.75, 60.3, r0 / 2) * bd.Rot(X=90) * bd.Cylinder(r2 / 2, 10)
-support -= bd.Pos(37.05, 112, r0 / 2) * bd.Rot(X=90) * bd.Cylinder(r1 / 2, 10) + bd.Pos(37.05, 55, r0 / 2) * bd.Rot(X=90) * bd.Cylinder(r1 / 2, 10)
-support += bd.Pos(37.05, 111.7, r0 / 2) * bd.Rot(X=90) * bd.Cylinder(r2 / 2, 10) + bd.Pos(37.05, 55.3, r0 / 2) * bd.Rot(X=90) * bd.Cylinder(r2 / 2, 10)
-height = -r0
-thickness, hook_size, hook_h, hook_tol = 1.5, 0.6, 0.1, 0.15
-hook_sketch = bd.Polyline((0, 0), (0, height), (thickness, height), (thickness + hook_size, height + hook_size),
-                          (thickness + hook_size, height + hook_size + hook_h),
-                          (thickness, height + hook_size * 2 + hook_h), (thickness, 0), (0, 0))
-
-hook_sketch_neg = bd.Polyline((0, 0), (0, height), (thickness + hook_size + hook_tol, height),
-                              (thickness + hook_size + hook_tol, height + hook_size - hook_h),
-                              (thickness + hook_tol, height + hook_size * 2 - hook_h),
-                              (thickness + hook_tol, 0), (0, 0))
-hook = bd.Pos(Y=7.5) * bd.extrude(bd.make_face(bd.Plane.XZ * hook_sketch), 15)  # type: ignore
-hook_neg = bd.Pos(Y=7.8) * bd.extrude(bd.make_face(bd.Plane.XZ * hook_sketch_neg), 15.6)  # type: ignore
-support -= bd.Pos(edge_l, 74, r0) * hook_neg + bd.Pos(edge_l, 104, r0) * hook_neg
-support += bd.Pos(edge_l - 3, 74, r0) * hook + bd.Pos(edge_l - 3, 104, r0) * hook
-bd.export_stl(support, 'output/left-support.stl')
-bd.export_stl(bd.mirror(support, bd.Plane.YZ), 'output/support.stl')
-bd.export_brep(support, 'output/support.brep')
+# bd.export_step(bd.mirror(top_ass, bd.Plane.XZ), 'output/top.step')
+# bd.export_step(bd.mirror(bd.mirror(top_left_ass, bd.Plane.XZ), bd.Plane.YZ), 'output/left-top.step')
+# bd.export_step(bd.mirror(keys, bd.Plane.XZ), 'output/keys.step')
+# bd.export_step(bd.mirror(keys_l, bd.Plane.YZ), 'output/left-keys.step')
+# bd.export_step(bd.mirror(bottom_ass - hotswaps - bd.Pos(Z=h['pcb'] - 0.2) * (bd.Part() + hotswaps), bd.Plane.XZ), 'output/bottom.step')
+# bd.export_step(bd.mirror(bd.mirror(bottom_ass - hotswaps_left - bd.Pos(Z=h['pcb'] - 0.2) * (bd.Part() + hotswaps_left), bd.Plane.XZ), bd.Plane.YZ), 'output/left-bottom.step')
 # %%
